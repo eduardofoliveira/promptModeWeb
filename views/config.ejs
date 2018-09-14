@@ -1,0 +1,84 @@
+<% include partials/header %>
+<div class="card bg-light mb-3">
+  <div class="card-header">Configuração</div>
+  <div class="card-body">
+    <table class="table table-borderless">
+      <thead>
+        <tr>
+          <th>Parametro</th>
+          <th>Valor</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% config.forEach(item => { %>
+          <tr>
+            <td><%= item.chave %></td>
+            <td><%= item.valor %></td>
+            <td>
+              <button class="btn btn-warning" data-toggle="modal" data-target="#modalEditar" data-id="<%= item.id %>" data-valor="<%= item.valor %>" onclick="editarProg(this)"><span class="fas fa-pencil-alt"></span> Editar</button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Adicionar -->
+<div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEditarLabel">Editar Parametro</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="input-group mb-3">
+            <input type="text" id="input-param" class="form-control">
+          </div>
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><span class="fas fa-times"></span> Fechar</button>
+        <button type="button" id="btn-sav-param" class="btn btn-primary"><span class="fas fa-save"></span> Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let id = 0
+  let valor = ''
+
+  function editarProg(event){
+    id = event.getAttribute('data-id')
+    valor = event.getAttribute('data-valor')
+    
+    $('#input-param').val(valor)
+  }
+
+  $('#btn-sav-param').click(() => {
+    valor = $('#input-param').val()
+    
+    axios({
+      method: 'put',
+      url: '/config/'+id,
+      data: {
+        valor
+      }
+    })
+    .then(response => {
+      if(response.status === 200){
+          location.reload()
+        }
+    })
+    .catch(error => {
+      console.log(error)
+    })
+
+  })
+</script>
+
+<% include partials/footer %>

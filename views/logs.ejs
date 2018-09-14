@@ -1,0 +1,23 @@
+<% include partials/header %>
+<div class="card bg-light mb-3">
+    <div class="card-header">Configuração</div>
+    <div class="card-body">
+      <table class="table table-borderless">
+        <thead>
+          <tr>
+            <th>Informacao</th>
+            <th>Horario</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% logs.forEach(item => { %>
+            <tr>
+              <td><%= item.informacao %></td>
+              <td><%= item.horario.toLocaleString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% include partials/footer %>

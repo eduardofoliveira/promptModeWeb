@@ -1,0 +1,157 @@
+<% include partials/header %>
+<div class="card bg-light mb-3">
+  <div class="card-header">Lista atual de dominios</div>
+  <div class="card-body">
+    <button class="btn btn-success" data-toggle="modal" data-target="#modalAdicionar" onclick="limparInputDomain()"><span class="fas fa-plus"></span> Adicionar</button>
+    <div>
+      <table class="table table-borderless">
+          <thead>
+            <tr>
+              <th>Dominio</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% dominios.forEach(item => { %>
+              <tr>
+                <td><a href="/<%= item.id %>"><%= item.dominio %></a></td>
+                <td>
+                  <button class="btn btn-danger" data-id="<%= item.id %>" onclick="deletarDomain(this)"><span class="fas fa-trash-alt"></span> Deletar</button>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+    </div>
+    
+  </div>
+</div>
+
+<!-- Modal Adicionar -->
+<div class="modal fade" id="modalAdicionar" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAdicionarLabel">Adicionar Dominio</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group mb-3">
+          <input type="text" id="input-domain" class="form-control" placeholder="Dominio">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><span class="fas fa-times"></span> Fechar</button>
+        <button type="button" id="btn-add-domain" class="btn btn-primary"><span class="fas fa-plus"></span> Adicionar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Mensagem -->
+<div class="modal fade" id="modalMensagem" tabindex="-1" role="dialog" aria-labelledby="modalMensagemLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalMensagemLabel">Mensagem</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Dominio já existe no sistema</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Há Programações -->
+<div class="modal fade" id="modalHaProgramacoes" tabindex="-1" role="dialog" aria-labelledby="modalHaProgramacoesLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalHaProgramacoesLabel">Mensagem</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Antes de deletar o dominio é necessário remover as programações</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let btnAdicionarDominio = document.querySelector('#btn-add-domain')
+
+  btnAdicionarDominio.addEventListener('click', () => {
+    
+    if(validar()){
+      let domain = $('#input-domain').val()
+
+      axios({
+        method: 'post',
+        url: '/',
+        data: {
+          dominio: domain
+        }
+      })
+      .then(response => {
+        if(response.status === 201){
+          $('#modalAdicionar').modal('hide')
+          location.reload()
+        }
+      })
+      .catch(error => {
+        if(error.response.status === 409){
+          $('#modalAdicionar').modal('hide')
+          setTimeout(() => {
+            $('#modalMensagem').modal('show')
+          }, 350)
+        }
+      })
+    }
+
+  })
+
+  function deletarDomain(event){
+    let id = event.getAttribute('data-id')
+    axios({
+      method: 'delete',
+      url: '/',
+      data: {
+        id
+      }
+    })
+    .then(response => {
+      if(response.status === 202){
+        let tr = $(event).closest('tr')
+        tr.remove()
+      }
+    })
+    .catch(error => {
+      $('#modalHaProgramacoes').modal('show')
+    })
+  }
+
+  function limparInputDomain(){
+    document.querySelector('#input-domain').value = ''
+  }
+
+  let validar = () => {
+    $('#input-domain').removeClass('is-invalid').removeClass('is-valid')
+
+    if($('#input-domain').val() === ""){
+      $('#input-domain').addClass("is-invalid")
+      return false
+    }else{
+      $('#input-domain').addClass("is-valid")
+    }
+
+    return true
+  }
+</script>
+<% include partials/footer %>

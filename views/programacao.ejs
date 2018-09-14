@@ -1,0 +1,441 @@
+<% include partials/header %>
+<div class="card bg-light mb-3">
+  <div class="card-header">Lista de programações</div>
+  <div class="card-body">
+    <button class="btn btn-success" data-toggle="modal" data-target="#modalAdicionar"><span class="fas fa-plus"></span> Adicionar</button>
+    <div>
+      <% const semana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sabado"] %>
+      <table class="table table-borderless">
+          <thead>
+            <tr>
+              <th>Dominio</th>
+              <th>DID</th>
+              <th>Destino</th>
+              <th>Dia da Semana</th>
+              <th>Horario</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% registros.forEach(item => { %>
+              <tr>
+                <td><%= dominio[0].dominio %></td>
+                <td><%= item.did %></td>
+                <td><%= item.destino %></td>
+                <td><%= semana[item.dia_semana] %></td>
+                <td><%= item.hora.toString().padStart(2, '0') %>:<%= item.minuto.toString().padStart(2, '0') %></td>
+                <td>
+                  <button class="btn btn-danger" data-id="<%= item.id %>" onclick="deletarProg(this)"><span class="fas fa-trash-alt"></span> Deletar</button>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+    </div>
+  </div>
+</div>
+
+<div class="card bg-light mb-3">
+  <div class="card-header">Lista de feriados</div>
+  <div class="card-body">
+    <button class="btn btn-success" data-toggle="modal" data-target="#modalAddFeriado"><span class="fas fa-plus"></span> Adicionar</button>
+    <div>
+      <table class="table table-borderless">
+          <thead>
+            <tr>
+              <th>Dominio</th>
+              <th>DID</th>
+              <th>Destino</th>
+              <th>Destino Pos</th>
+              <th>Inicio</th>
+              <th>Fim</th>
+              <th>Açoes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% feriados.forEach(item => { %>
+              <tr>
+                <td><%= dominio[0].dominio %></td>
+                <td><%= item.did %></td>
+                <td><%= item.destino %></td>
+                <td><%= item.destino_pos %></td>
+                <td><%= item.inicio.toLocaleString() %></td>
+                <td><%= item.fim.toLocaleString() %></td>
+                <td>
+                  <button class="btn btn-danger" data-id="<%= item.id %>" onclick="deletarFeriado(this)"><span class="fas fa-trash-alt"></span> Deletar</button>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Adicionar -->
+<div class="modal fade" id="modalAdicionar" tabindex="-1" role="dialog" aria-labelledby="modalAdicionarLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalAdicionarLabel">Adicionar Programação</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="did-tronco">
+            <label class="form-check-label" for="did-tronco">
+                DID Tronco
+              </label>
+        </div>
+        <div class="input-group mb-3">
+          <input type="text" id="input-did" class="form-control" placeholder="DID">
+        </div>
+        <div class="input-group mb-3">
+          <input type="text" id="input-destino" class="form-control" placeholder="Destino">
+        </div>
+        <div class="input-group mb-3">
+          <select class="custom-select" id="input-dia-semana">
+            <option selected disabled>Dia da Semana</option>
+            <option value="0">Domingo</option>
+            <option value="1">Segunda</option>
+            <option value="2">Terça</option>
+            <option value="3">Quarta</option>
+            <option value="4">Quinta</option>
+            <option value="5">Sexta</option>
+            <option value="6">Sabado</option>
+            <option value="7">Segunda a Sexta</option>
+            <option value="8">Segunda a Sabado</option>
+            <option value="9">Segunda a Domingo</option>
+          </select>
+        </div>
+        <div class="input-group mb-3">
+            <select class="custom-select" id="input-hora">
+                <option selected disabled>Hora</option>
+                <option value="0">0h</option>
+                <option value="1">1h</option>
+                <option value="2">2h</option>
+                <option value="3">3h</option>
+                <option value="4">4h</option>
+                <option value="5">5h</option>
+                <option value="6">6h</option>
+                <option value="7">7h</option>
+                <option value="8">8h</option>
+                <option value="9">9h</option>
+                <option value="10">10h</option>
+                <option value="11">11h</option>
+                <option value="12">12h</option>
+                <option value="13">13h</option>
+                <option value="14">14h</option>
+                <option value="15">15h</option>
+                <option value="16">16h</option>
+                <option value="17">17h</option>
+                <option value="18">18h</option>
+                <option value="19">19h</option>
+                <option value="20">20h</option>
+                <option value="21">21h</option>
+                <option value="22">22h</option>
+                <option value="23">23h</option>
+              </select>
+
+              <select class="custom-select" id="input-minuto">
+                  <option selected disabled>Minutos</option>
+                  <option value="0">0</option>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                  <option value="25">25</option>
+                  <option value="30">30</option>
+                  <option value="35">35</option>
+                  <option value="40">40</option>
+                  <option value="45">45</option>
+                  <option value="50">50</option>
+                  <option value="55">55</option>
+                </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><span class="fas fa-times"></span> Fechar</button>
+        <button type="button" id="btn-add-prog" class="btn btn-primary"><span class="fas fa-plus"></span> Adicionar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Feriado -->
+<div class="modal fade" id="modalAddFeriado" tabindex="-1" role="dialog" aria-labelledby="modalAddFeriadoLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalAddFeriadoLabel">Adicionar Feriado</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="did-tronco-feriado">
+              <label class="form-check-label" for="did-tronco-feriado">
+                  DID Tronco
+              </label>
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" id="input-did-feriado" class="form-control" placeholder="DID">
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" id="input-destino-feriado" class="form-control" placeholder="Destino">
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" id="input-destino-pos-feriado" class="form-control" placeholder="Destino Pós Feriado">
+          </div>
+          <div class="form-group">
+            <label for="input-inicio-feriado">Data de Inicio</label>
+            <input type="text" id="input-inicio-feriado" class="form-control" placeholder="Data de Inicio">
+          </div>
+          <div class="form-group">
+            <label for="input-fim-feriado">Data de Termino</label>
+            <input type="text" id="input-fim-feriado" class="form-control" placeholder="Data de Termino">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal"><span class="fas fa-times"></span> Fechar</button>
+          <button type="button" id="btn-add-feriado" class="btn btn-primary"><span class="fas fa-plus"></span> Adicionar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  $.datetimepicker.setLocale('pt-BR')
+  $('#input-inicio-feriado').datetimepicker({
+    step: 5,
+    format: 'Y-m-d H:i'
+  });
+  $('#input-fim-feriado').datetimepicker({
+    step: 5,
+    format: 'Y-m-d H:i'
+	});
+
+  $('#did-tronco').click(function() {
+    if($(this).is(':checked')){
+      $('#input-did').prop('disabled', true);
+    }else{
+      $('#input-did').prop('disabled', false);
+    }
+  })
+
+  $('#did-tronco-feriado').click(function() {
+    if($(this).is(':checked')){
+      $('#input-did-feriado').prop('disabled', true);
+    }else{
+      $('#input-did-feriado').prop('disabled', false);
+    }
+  })
+
+  $('#btn-add-feriado').click(() => {
+    let dadosFeriado = {}
+    if(validarFeriado()){
+      if(!$('#input-did-feriado').prop('disabled')){
+        dadosFeriado = {
+          did: $('#input-did-feriado').val(),
+          destino: $('#input-destino-feriado').val(),
+          destino_pos: $('#input-destino-pos-feriado').val(),
+          inicio: $('#input-inicio-feriado').val(),
+          final: $('#input-fim-feriado').val()
+        }
+      }else{
+        dadosFeriado = {
+          did: 'tronco',
+          destino: $('#input-destino-feriado').val(),
+          destino_pos: $('#input-destino-pos-feriado').val(),
+          inicio: $('#input-inicio-feriado').val(),
+          final: $('#input-fim-feriado').val()
+        }
+      }
+
+      axios({
+        method: 'post',
+        url: '/<%= id %>/feriado',
+        data: {
+          dadosFeriado
+        }
+      })
+      .then(response => {
+        if(response.status === 201){
+          location.reload()
+        }
+      })
+
+    }
+  })
+
+  $('#btn-add-prog').click(() => {
+    let dados = {}
+
+    if(validar()){
+      if(!$('#input-did').prop('disabled')){
+        dados = {
+          did: $('#input-did').val(),
+          destino: $('#input-destino').val(),
+          dia_semana: $('#input-dia-semana').val(),
+          hora: $('#input-hora').val(),
+          minuto: $('#input-minuto').val()
+        }
+      }else{
+        dados = {
+          did: 'tronco',
+          destino: $('#input-destino').val(),
+          dia_semana: $('#input-dia-semana').val(),
+          hora: $('#input-hora').val(),
+          minuto: $('#input-minuto').val()
+        }
+      }
+
+      axios({
+        method: 'post',
+        url: '/<%= id %>',
+        data: {
+          dados
+        }
+      })
+      .then(response => {
+        if(response.status === 201){
+          location.reload()
+        }
+      })
+    }
+
+    
+  })
+
+  let validar = () => {
+    $('#input-did').removeClass('is-invalid').removeClass('is-valid')
+    $('#input-destino').removeClass('is-invalid').removeClass('is-valid')
+    $('#input-dia-semana').removeClass('is-invalid').removeClass('is-valid')
+    $('#input-hora').removeClass('is-invalid').removeClass('is-valid')
+    $('#input-minuto').removeClass('is-invalid').removeClass('is-valid')
+
+    if($('#input-did').prop('disabled')){
+      $('#input-did').addClass("is-valid")
+    }else if($('#input-did').val() === ""){
+      $('#input-did').addClass("is-invalid")
+      return false
+    }else{
+      $('#input-did').addClass("is-valid")
+    }
+
+    if($('#input-destino').val() === ""){
+      $('#input-destino').addClass("is-invalid")
+      return false
+    }else{
+      $('#input-destino').addClass("is-valid")
+    }
+
+    if($('#input-dia-semana').val() === null){
+      $('#input-dia-semana').addClass("is-invalid")
+      return false
+    }else{
+      $('#input-dia-semana').addClass("is-valid")
+    }
+
+    if($('#input-hora').val() === null){
+      $('#input-hora').addClass("is-invalid")
+      return false
+    }else{
+      $('#input-hora').addClass("is-valid")
+    }
+
+    if($('#input-minuto').val() === null){
+      $('#input-minuto').addClass("is-invalid")
+      return false
+    }else{
+      $('#input-minuto').addClass("is-valid")
+    }
+
+    return true
+  }
+
+  let validarFeriado = () => {
+    $('#input-did-feriado').removeClass('is-invalid').removeClass('is-valid')
+    $('#input-destino-feriado').removeClass('is-invalid').removeClass('is-valid')
+    $('#input-destino-pos-feriado').removeClass('is-invalid').removeClass('is-valid')
+    $('#input-inicio-feriado').removeClass('is-invalid').removeClass('is-valid')
+    $('#input-fim-feriado').removeClass('is-invalid').removeClass('is-valid')
+
+    if($('#input-did-feriado').prop('disabled')){
+      $('#input-did-feriado').addClass("is-valid")
+    }else if($('#input-did-feriado').val() === ""){
+      $('#input-did-feriado').addClass("is-invalid")
+      return false
+    }else{
+      $('#input-did-feriado').addClass("is-valid")
+    }
+
+    if($('#input-destino-feriado').val() === ""){
+      $('#input-destino-feriado').addClass("is-invalid")
+      return false
+    }else{
+      $('#input-destino-feriado').addClass("is-valid")
+    }
+
+    if($('#input-destino-pos-feriado').val() === ""){
+      $('#input-destino-pos-feriado').addClass("is-invalid")
+      return false
+    }else{
+      $('#input-destino-pos-feriado').addClass("is-valid")
+    }
+
+    let string_val_date = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/
+
+    if(string_val_date.test($('#input-inicio-feriado').val()) && $('#input-inicio-feriado').val() !== ""){
+      $('#input-inicio-feriado').addClass("is-valid")
+    }else{
+      $('#input-inicio-feriado').addClass("is-invalid")
+    }
+
+    if(string_val_date.test($('#input-fim-feriado').val()) && $('#input-fim-feriado').val() !== ""){
+      $('#input-fim-feriado').addClass("is-valid")
+    }else{
+      $('#input-fim-feriado').addClass("is-invalid")
+    }
+
+    return true
+  }
+
+  function deletarProg(event){
+    let id = event.getAttribute('data-id')
+    axios({
+      method: 'delete',
+      url: '/<%= id %>',
+      data: {
+        id
+      }
+    })
+    .then(response => {
+      if(response.status === 202){
+        let tr = $(event).closest('tr')
+        tr.remove()
+      }
+    })
+  }
+
+  function deletarFeriado(event){
+    let id = event.getAttribute('data-id')
+    axios({
+      method: 'delete',
+      url: '/<%= id %>/feriado/'+id,
+      data: {
+        id
+      }
+    })
+    .then(response => {
+      if(response.status === 202){
+        let tr = $(event).closest('tr')
+        tr.remove()
+      }
+    })
+  }
+</script>
+<% include partials/footer %>
