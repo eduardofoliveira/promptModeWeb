@@ -33,10 +33,18 @@ let init = async() => {
     let [rows] = await connection.query('SELECT dominio, did, destino FROM programacoes, dominios WHERE programacoes.fk_id_dominio = dominios.id and dia_semana = ? and hora = ? and minuto = ? and did not in (SELECT did FROM feriados WHERE now() BETWEEN inicio and fim and fk_id_dominio = dominios.id) order by did, dia_semana, hora, minuto desc', [diaSemana, hora, minuto])
       .catch(error => {
         connection.query('INSERT INTO log (informacao) values (?)', [error])
+        .catch(error => {
+          console.log(new Date().toLocaleString())
+          console.log(error)
+        })
       })
     let [url] = await connection.query('SELECT valor FROM config WHERE chave = "url_webservice"')
       .catch(error => {
         connection.query('INSERT INTO log (informacao) values (?)', [error])
+        .catch(error => {
+          console.log(new Date().toLocaleString())
+          console.log(error)
+        })
       })
 
     if(rows.length > 0){
