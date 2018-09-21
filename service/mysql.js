@@ -1,9 +1,10 @@
-const mysql = require('mysql2/promise')
+//const mysql = require('mysql2/promise')
+const mysql = require('mariadb')
 
 module.exports = mysql.createPool({
-    host: '127.0.0.1',
+    host: '35.171.122.245',
     user: 'root',
-    password: '',
+    password: '190790edu',
     database: 'promptmode',
     waitForConnections: true,
     connectionLimit: 10,
