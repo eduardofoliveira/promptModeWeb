@@ -1,5 +1,4 @@
-//const mysql = require('mysql2/promise')
-const mysql = require('mariadb')
+const mysql = require('mysql2/promise')
 
 module.exports = mysql.createPool({
     host: '35.171.122.245',
