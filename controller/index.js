@@ -4,13 +4,13 @@ const semana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sa
 
 let init = connection => {
   app.get('/', async (req, res) => {
-    let [rows] = await connection.query('SELECT * FROM dominios')
+    let rows = await connection.query('SELECT * FROM dominios')
     res.render('index', {dominios: rows})
   })
 
   app.post('/', async (req, res) => {
     let { dominio } = req.body
-    let [rows] = await connection.query('SELECT * FROM dominios where dominio = ?', dominio)
+    let rows = await connection.query('SELECT * FROM dominios where dominio = ?', dominio)
 
     if(rows.length === 0){
       await connection.query('INSERT INTO dominios (dominio) values (?)', dominio)
@@ -26,7 +26,7 @@ let init = connection => {
 
   app.delete('/', async (req, res) => {
     let { id } = req.body
-    let [dominio] = await connection.query('SELECT dominio FROM dominios where id = ?', id)
+    let dominio = await connection.query('SELECT dominio FROM dominios where id = ?', id)
     await connection.query('DELETE FROM dominios where id = ?', id)
     .then(response => {
       res.statusCode = 202
@@ -43,15 +43,15 @@ let init = connection => {
   })
 
   app.get('/config', async (req, res) => {
-    let [config] = await connection.query('SELECT * FROM config order by id asc limit 100')
+    let config = await connection.query('SELECT * FROM config order by id asc limit 100')
     res.render('config', {config})
   })
 
   app.put('/config/:id', async (req, res) => {
     let { id } = req.params
     let { valor } = req.body
-    let [result] = await connection.query('SELECT chave, valor FROM config WHERE id = ?', [id])
-    let [rows] = await connection.query('UPDATE config SET valor = ? WHERE id = ?', [valor, id])
+    let result = await connection.query('SELECT chave, valor FROM config WHERE id = ?', [id])
+    let rows = await connection.query('UPDATE config SET valor = ? WHERE id = ?', [valor, id])
     
     if(rows.affectedRows === 1){
       res.statusCode = 200
@@ -65,25 +65,25 @@ let init = connection => {
   })
 
   app.get('/logs', async (req, res) => {
-    let [logs] = await connection.query('SELECT * FROM log ORDER BY horario DESC')
+    let logs = await connection.query('SELECT * FROM log ORDER BY horario DESC')
     res.render('logs', {logs})
   })
 
   app.get('/:id', async (req, res) => {
     let { id } = req.params
-    let [rows] = await connection.query('SELECT * FROM programacoes WHERE fk_id_dominio = ? order by did, dia_semana, hora, minuto desc', id)
-    let [dominio] = await connection.query('SELECT dominio FROM dominios WHERE id = ?', id)
-    let [feriados] = await connection.query('SELECT * FROM feriados WHERE fk_id_dominio = ? order by did, inicio desc', id)
+    let rows = await connection.query('SELECT * FROM programacoes WHERE fk_id_dominio = ? order by did, dia_semana, hora, minuto desc', id)
+    let dominio = await connection.query('SELECT dominio FROM dominios WHERE id = ?', id)
+    let feriados = await connection.query('SELECT * FROM feriados WHERE fk_id_dominio = ? order by did, inicio desc', id)
     res.render('programacao', {registros: rows, dominio, id, feriados})
   })
 
   app.post('/:id', async (req, res) => {
     let { id } = req.params
     let { dados } = req.body
-    let [result] = await connection.query('SELECT dominio FROM dominios where id = ?', id)
+    let result = await connection.query('SELECT dominio FROM dominios where id = ?', id)
 
     if(dados.dia_semana >= 0 && dados.dia_semana <= 6){
-      let [rows] = await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, dados.dia_semana, dados.hora, dados.minuto])
+      let rows = await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, dados.dia_semana, dados.hora, dados.minuto])
       if(rows.affectedRows === 1){
         res.statusCode = 201
         res.json({ message: 'Programação adicionada' })
@@ -94,7 +94,7 @@ let init = connection => {
       await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 2, dados.hora, dados.minuto])
       await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 3, dados.hora, dados.minuto])
       await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 4, dados.hora, dados.minuto])
-      let [rows] = await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 5, dados.hora, dados.minuto])
+      let rows = await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 5, dados.hora, dados.minuto])
       
       if(rows.affectedRows === 1){
         res.statusCode = 201
@@ -107,7 +107,7 @@ let init = connection => {
       await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 3, dados.hora, dados.minuto])
       await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 4, dados.hora, dados.minuto])
       await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 5, dados.hora, dados.minuto])
-      let [rows] = await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 6, dados.hora, dados.minuto])
+      let rows = await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 6, dados.hora, dados.minuto])
       
       if(rows.affectedRows === 1){
         res.statusCode = 201
@@ -121,7 +121,7 @@ let init = connection => {
       await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 3, dados.hora, dados.minuto])
       await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 4, dados.hora, dados.minuto])
       await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 5, dados.hora, dados.minuto])
-      let [rows] = await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 6, dados.hora, dados.minuto])
+      let rows = await connection.query('INSERT INTO programacoes (fk_id_dominio, did, destino, dia_semana, hora, minuto) values (?, ?, ?, ?, ?, ?)', [id, dados.did, dados.destino, 6, dados.hora, dados.minuto])
       
       if(rows.affectedRows === 1){
         res.statusCode = 201
@@ -135,7 +135,7 @@ let init = connection => {
     let { id } = req.params
     let { dadosFeriado } = req.body
 
-    let [rows] = await connection.query('INSERT INTO feriados (fk_id_dominio, did, destino, destino_pos, inicio, fim) values (?, ?, ?, ?, ?, ?)', [id, dadosFeriado.did, dadosFeriado.destino, dadosFeriado.destino_pos, dadosFeriado.inicio, dadosFeriado.final])
+    let rows = await connection.query('INSERT INTO feriados (fk_id_dominio, did, destino, destino_pos, inicio, fim) values (?, ?, ?, ?, ?, ?)', [id, dadosFeriado.did, dadosFeriado.destino, dadosFeriado.destino_pos, dadosFeriado.inicio, dadosFeriado.final])
     if(rows.affectedRows === 1){
       res.statusCode = 201
       res.json({ message: 'Feriado Adicionado' })
@@ -144,8 +144,8 @@ let init = connection => {
 
   app.delete('/:id', async (req, res) => {
     let { id } = req.body
-    let [result] = await connection.query('SELECT * FROM programacoes where id = ?', id)
-    let [domain] = await connection.query('SELECT dominio FROM dominios, programacoes where dominios.id = programacoes.fk_id_dominio and programacoes.id = ?', id)
+    let result = await connection.query('SELECT * FROM programacoes where id = ?', id)
+    let domain = await connection.query('SELECT dominio FROM dominios, programacoes where dominios.id = programacoes.fk_id_dominio and programacoes.id = ?', id)
 
     await connection.query('DELETE FROM programacoes where id = ?', id)
     res.statusCode = 202
