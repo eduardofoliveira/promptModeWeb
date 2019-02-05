@@ -18,8 +18,8 @@ let init = async() => {
       .catch(error => {
         console.log(error)
       })
-    //console.log('KeepAlive DB ' + new Date().toLocaleString())
-  }, 5000)
+    console.log('KeepAlive DB ' + new Date().toLocaleString())
+  }, 120000)
 
   app.use(indexController(connection))
 
