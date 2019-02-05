@@ -14,6 +14,6 @@ setInterval(async () => {
       console.log(error)
     })
   //console.log('KeepAlive DB ' + new Date().toLocaleString())
-}, 300000)
+}, 5000)
 
 module.exports = connection
