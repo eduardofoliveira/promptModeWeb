@@ -12,6 +12,15 @@ let indexController = require('./controller/index')
 
 let init = async() => {
   let connection = await require('./service/mariadb')
+
+  setInterval(async () => {
+    await connection.query('SELECT 1 + 1')
+      .catch(error => {
+        console.log(error)
+      })
+    //console.log('KeepAlive DB ' + new Date().toLocaleString())
+  }, 5000)
+
   app.use(indexController(connection))
 
   let port = process.env.PORT || 81

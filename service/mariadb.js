@@ -8,12 +8,4 @@ const connection = mariadb.createConnection({
   socketPath: '/var/run/mysqld/mysqld.sock'
 })
 
-setInterval(async () => {
-  await connection.query('SELECT 1 + 1')
-    .catch(error => {
-      console.log(error)
-    })
-  //console.log('KeepAlive DB ' + new Date().toLocaleString())
-}, 5000)
-
 module.exports = connection
