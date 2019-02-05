@@ -65,7 +65,7 @@ let init = connection => {
   })
 
   app.get('/logs', async (req, res) => {
-    let logs = await connection.query('SELECT * FROM log ORDER BY horario DESC')
+    let logs = await connection.query('SELECT * FROM log ORDER BY horario DESC LIMIT 100')
     res.render('logs', {logs})
   })
 
