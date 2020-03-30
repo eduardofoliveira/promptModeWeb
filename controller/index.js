@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express.Router()
 const semana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sabado"]
+const Moment = require ('moment')
 
 let init = connection => {
   app.get('/', async (req, res) => {
@@ -66,7 +67,13 @@ let init = connection => {
 
   app.get('/logs', async (req, res) => {
     let logs = await connection.query('SELECT * FROM log ORDER BY horario DESC LIMIT 100')
-    res.render('logs', {logs})
+
+    logs = logs.map(item => {
+      item.horario = Moment(item.horario).format('DD-MM-YYYY HH:mm:ss')
+      return item
+    })
+
+    res.render('logs', { logs })
   })
 
   app.get('/:id', async (req, res) => {
@@ -74,6 +81,13 @@ let init = connection => {
     let rows = await connection.query('SELECT * FROM programacoes WHERE fk_id_dominio = ? order by did, dia_semana, hora, minuto desc', id)
     let dominio = await connection.query('SELECT dominio FROM dominios WHERE id = ?', id)
     let feriados = await connection.query('SELECT * FROM feriados WHERE fk_id_dominio = ? order by did, inicio desc', id)
+    
+    feriados = feriados.map(item => {
+      item.inicio = Moment(item.inicio).format('DD-MM-YYYY HH:mm:ss')
+      item.fim = Moment(item.fim).format('DD-MM-YYYY HH:mm:ss')
+      return item
+    })
+    
     res.render('programacao', {registros: rows, dominio, id, feriados})
   })
 

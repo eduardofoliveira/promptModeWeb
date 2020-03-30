@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
@@ -12,14 +13,6 @@ let indexController = require('./controller/index')
 
 let init = async() => {
   let connection = await require('./service/mariadb')
-
-  setInterval(async () => {
-    await connection.query('SELECT 1 + 1')
-      .catch(error => {
-        console.log(error)
-      })
-    console.log('KeepAlive DB ' + new Date().toLocaleString())
-  }, 120000)
 
   app.use(indexController(connection))
 

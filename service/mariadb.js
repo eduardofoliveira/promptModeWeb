@@ -1,11 +1,21 @@
 const mariadb = require('mariadb')
+let connection = null
 
-const connection = mariadb.createConnection({
-  host: '35.171.122.245',
-  user: 'root',
-  password: '190790edu',
-  database: 'promptmode',
-  socketPath: '/var/run/mysqld/mysqld.sock'
-})
+if(process.env.ENVIRONMENT === 'development'){
+  connection = mariadb.createConnection({
+    host: process.env.MARIA_DB_HOST,
+    user: process.env.MARIA_DB_USER,
+    password: process.env.MARIA_DB_PASS,
+    database: process.env.MARIA_DB_DATABASE,
+  })
+}else{
+  connection = mariadb.createConnection({
+    host: process.env.MARIA_DB_HOST,
+    user: process.env.MARIA_DB_USER,
+    password: process.env.MARIA_DB_PASS,
+    database: process.env.MARIA_DB_DATABASE,
+    socketPath: process.env.MARIA_DB_SOCKET,
+  })
+}
 
 module.exports = connection

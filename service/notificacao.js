@@ -5,8 +5,8 @@ const transportCloud = nodemailer.createTransport({
   secure: true,
   port: 465,
   auth: {
-      user: 'suporte1@cloudcom.com.br',
-      pass: 'Cloud777'
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASS
   }
 })
 
